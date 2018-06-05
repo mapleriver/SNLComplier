@@ -1,0 +1,7 @@
+﻿  MainWindow.cpp
+  Scanner.cpp
+E:\ArtCode\QT\SNLComplier\Token.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 (编译源文件 Scanner.cpp)
+Scanner.cpp(52): warning C4189: “ch”: 局部变量已初始化但不引用
+E:\ArtCode\QT\SNLComplier\Token.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 (编译源文件 MainWindow.cpp)
+  SNLComplier.vcxproj -> E:\ArtCode\QT\SNLComplier\debug\SNLComplier.exe
+  SNLComplier.vcxproj -> debug\SNLComplier.pdb (Full PDB)
