@@ -14,6 +14,10 @@ CodeEditor::CodeEditor(QString filePath,QWidget *parent) :
     updateLineNumberAreaWidth(0);
     highlightCurrentLine();
 
+    QFont font;
+    font.setPixelSize(16);
+    this->setFont(font);
+
     this->readFromFile();
 }
 

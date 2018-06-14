@@ -28,13 +28,17 @@ SOURCES += \
         MainWindow.cpp \
     Token.cpp \
     Scanner.cpp \
-    CodeEditor.cpp
+    CodeEditor.cpp \
+    Parser.cpp \
+    OStreamToTextEdit.cpp
 
 HEADERS += \
         MainWindow.h \
     Token.h \
     Scanner.h \
-    CodeEditor.h
+    CodeEditor.h \
+    Parser.h \
+    OStreamToTextEdit.h
 
 FORMS += \
         MainWindow.ui

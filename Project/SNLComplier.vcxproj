@@ -128,7 +128,7 @@
       <AdditionalIncludeDirectories>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;$(QTDIR)\include;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtCore;debug;$(QTDIR)\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>debug\</AssemblerListingLocation>
-      <BrowseInformation>false</BrowseInformation>
+      <BrowseInformation>true</BrowseInformation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4577;4467;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -180,10 +180,15 @@
       <DynamicSource>output</DynamicSource>
       <IncludePath>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;$(QTDIR)\mkspecs/win32-msvc;.;$(QTDIR)\include;$(QTDIR)\include/QtWidgets;$(QTDIR)\include/QtGui;$(QTDIR)\include/QtANGLE;$(QTDIR)\include/QtCore;C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE;C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\INCLUDE;C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\ucrt;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um;C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\shared;C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\um;C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\winrt</IncludePath>
     </QtMoc>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CodeEditor.cpp" />
     <ClCompile Include="MainWindow.cpp" />
+    <ClCompile Include="OStreamToTextEdit.cpp" />
+    <ClCompile Include="Parser.cpp" />
     <ClCompile Include="Scanner.cpp" />
     <ClCompile Include="Token.cpp" />
     <ClCompile Include="main.cpp" />
@@ -193,6 +198,8 @@
     </QtMoc>
     <QtMoc Include="MainWindow.h">
     </QtMoc>
+    <ClInclude Include="OStreamToTextEdit.h" />
+    <ClInclude Include="Parser.h" />
     <ClInclude Include="Scanner.h" />
     <ClInclude Include="Token.h" />
   </ItemGroup>
@@ -218,6 +225,9 @@
   <ItemGroup>
     <QtUic Include="MainWindow.ui">
     </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

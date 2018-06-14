@@ -16,7 +16,7 @@ private:
 	Scanner& scanner;
 public:
 	ParseTreeNode * getParseTree();
-
+	void printParseTree(ParseTreeNode * parseTree);
 	Parser(Scanner& scan);
 	~Parser();
 
@@ -156,7 +156,7 @@ public:
 			this->children[i] = nullptr;
 		}
 		this->sibling = nullptr;
-		sameIdNum = 0;
+		idNum = 0;
 	}
 
 	ParseTreeNode(ParseNodeType nodeType):
@@ -204,8 +204,8 @@ public:
 		ExpType exp;
 	} specificType;
 
-	int sameIdNum;
-	std::string name;
+	int idNum;
+	std::string name[10];
 	SymbolTable symbolTable;
 	struct{
 		struct{

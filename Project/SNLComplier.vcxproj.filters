@@ -52,6 +52,12 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Parser.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OStreamToTextEdit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="CodeEditor.h">
@@ -68,10 +74,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    
-    
-    
-    
     <CustomBuild Include="debug\moc_predefs.h.cbt">
       <Filter>Generated Files</Filter>
     </CustomBuild>
@@ -86,5 +88,16 @@
     <QtUic Include="MainWindow.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Parser.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OStreamToTextEdit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

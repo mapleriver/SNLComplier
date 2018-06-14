@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1400</width>
+    <height>900</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -55,7 +55,7 @@
         <widget class="QTabWidget" name="editorTabWidget">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>1</horstretch>
+           <horstretch>2</horstretch>
            <verstretch>2</verstretch>
           </sizepolicy>
          </property>
@@ -97,6 +97,41 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QFrame" name="CompileOutFrame">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>1</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>complile output</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTextBrowser" name="CompileOutput">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>1</horstretch>
+              <verstretch>1</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>
@@ -115,7 +150,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -133,13 +168,13 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="CompileOutputWidget">
+      <widget class="QWidget" name="ErrorMsgWidget">
        <attribute name="title">
-        <string>Compile Output</string>
+        <string>Error Message</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
-         <widget class="QTextBrowser" name="CompileOutput"/>
+         <widget class="QTextBrowser" name="ErrorMessage"/>
         </item>
        </layout>
       </widget>
@@ -152,7 +187,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>1400</width>
      <height>23</height>
     </rect>
    </property>
@@ -169,6 +204,8 @@
      <string>Build</string>
     </property>
     <addaction name="actionLexical_Analysis"/>
+    <addaction name="actionSyntax_Analysis"/>
+    <addaction name="actionClear_message"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuBuild"/>
@@ -203,6 +240,16 @@
   <action name="actionSave">
    <property name="text">
     <string>Save</string>
+   </property>
+  </action>
+  <action name="actionSyntax_Analysis">
+   <property name="text">
+    <string>Syntax Analysis</string>
+   </property>
+  </action>
+  <action name="actionClear_message">
+   <property name="text">
+    <string>Clear message</string>
    </property>
   </action>
  </widget>

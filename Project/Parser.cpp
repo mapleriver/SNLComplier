@@ -9,11 +9,236 @@ ParseTreeNode* Parser::getParseTree() {
 	parseTreeRoot = program();
 	if (curToken.tag != Tag::ENDFILE)
 		syntaxError("Code ends before file\n");
+
 	return 	 parseTreeRoot;
 }
 
+static int INDENTSPACE = 0;
+
+static void printSpaces() {
+	for (int i = 0; i < INDENTSPACE; ++i) {
+		std::cout << " ";
+	}
+}
+
+void Parser::printParseTree(ParseTreeNode * tree)
+{
+	int i;
+
+	INDENTSPACE += 4;
+
+	while (tree != NULL)
+	{
+		printSpaces();
+
+		switch (tree->nodeType)
+		{
+		case ParseNodeType::PROG:
+			std::cout << "PROG  ";
+			break;
+		case ParseNodeType::PHEAD:
+			std::cout << "PHEAD  ";
+			std::cout << tree->name[0] << "  ";
+			break;
+		case ParseNodeType::DECPART:
+			std::cout << "DECPART  ";
+			if (tree->attr.process.paramType == ParamType::VARPARAM)
+				std::cout << "var param:  ";
+			if (tree->attr.process.paramType == ParamType::VALPARAM)
+				std::cout << "value param:  ";
+			switch (tree->specificType.dec)
+			{
+			case  DecType::ARRAY:
+				std::cout << "ARRAY  ";
+				std::cout << tree->attr.array.upperBound << "  ";
+				std::cout << tree->attr.array.lowerBound << "  ";
+				if (tree->attr.array.type == DecType::CHAR)
+					std::cout << "CHAR  ";
+				else if (tree->attr.array.type == DecType::INTEGER)
+					std::cout << "INTEGER  ";
+				break;
+			case  DecType::CHAR:
+				std::cout << "CHAR  ";
+				break;
+			case  DecType::INTEGER:
+				std::cout << "INTEGER  ";
+				break;
+			case  DecType::RECORD:
+				std::cout << "RECORD  ";
+				break;
+			case  DecType::ID:
+				std::cout << "ID  ";
+				std::cout << tree->attr.typeName << "  ";
+				break;
+			default:
+				std::cout << "error1!";
+			};
+			if (tree->idNum != 0) {
+				for (int i = 0; i <= (tree->idNum); i++)
+				{
+					std::cout << tree->name[i] << "  ";
+				}
+			}
+			else
+			{
+				std::cout << "wrong!no var!" << std::endl;
+			}
+			break;
+		case ParseNodeType::TYPEDEC:
+			std::cout << "TYPEDEC  ";
+			break;
+		case ParseNodeType::VARDEC:
+			std::cout << "VARDEC  ";
+			if (!tree->symbolTable.empty())
+				std::cout << tree->symbolTable.begin()->second.specific.VarAttr.off << "  "
+				<< tree->symbolTable.begin()->second.specific.VarAttr.level << "  ";
+			break;
+		case ParseNodeType::PROCDEC:
+			std::cout << "PROCDEC  ";
+			std::cout << tree->name[0] << "  ";
+			if (!tree->symbolTable.empty())
+				std::cout << tree->symbolTable.begin()->second.specific.ProcAttr.mOff << "  "
+				<< tree->symbolTable.begin()->second.specific.ProcAttr.nOff << "  "
+				<< tree->symbolTable.begin()->second.specific.ProcAttr.level << "  ";
+			break;
+		case ParseNodeType::STMLIST:
+			std::cout << "STMLIST" << "  ";
+			break;
+		case ParseNodeType::STMT:
+			std::cout << "STMT" << "  ";
+			switch (tree->specificType.stmt)
+			{
+			case StmtType::IF:
+				std::cout << "IF" << "  ";
+				break;
+			case StmtType::WHILE:
+				std::cout << "WHILE" << "  ";
+				break;
+			case StmtType::ASSIGN:
+				std::cout << "ASSIGN" << "  ";
+				break;
+			case StmtType::READ:
+				std::cout << "READ" << "  ";
+				std::cout << tree->name[0];
+				if (!tree->symbolTable.empty())
+					std::cout << tree->symbolTable.begin()->second.specific.VarAttr.off << "  "
+					<< tree->symbolTable.begin()->second.specific.VarAttr.level << "  ";
+				break;
+			case StmtType::WRITE:
+				std::cout << "WRITE" << "  ";
+				break;
+            case StmtType::CALL:
+				std::cout << "CALL" << "  ";
+				std::cout << tree->name[0] << "  ";
+				break;
+			case StmtType::RETURN:
+				std::cout << "RETURN" << "  ";
+				break;
+			default:
+				std::cout << "error2!";
+			}
+			break;
+		case ParseNodeType::EXP:
+			std::cout << "EXP" << "  ";
+			switch (tree->specificType.exp)
+			{
+			case ExpType::OP:
+				std::cout << "OP" << "  ";
+				switch (tree->attr.exp.op)
+				{
+				case Tag::EQ:
+					std::cout << "=" << "  ";
+					break;
+				case Tag::LT:
+					std::cout << "<" << "  ";
+					break;
+				case Tag::PLUS:
+					std::cout << "+" << "  ";
+					break;
+				case Tag::MINUS:
+					std::cout << "-" << "  ";
+					break;
+				case Tag::TIMES:
+					std::cout << "*" << "  ";
+					break;
+				case Tag::OVER:
+					std::cout << "/" << "  ";
+					break;
+				default:
+					std::cout << "error3!";
+					break;
+				}
+				if (tree->attr.exp.varType == VariableType::ARRAYMEMB)
+				{
+					std::cout << "ArrayMember  ";
+					std::cout << tree->name[0] << "  ";
+				}
+				break;
+			case ExpType::CONST:
+				std::cout << "CONST" << "  ";
+				switch (tree->attr.exp.varType)
+				{
+				case VariableType::ID:
+					std::cout << "ID  ";
+					std::cout << tree->name[0] << "  ";
+					break;
+				case VariableType::FIELDMEMB:
+					std::cout << "FieldMember  ";
+					std::cout << tree->name[0] << "  ";
+					break;
+				case VariableType::ARRAYMEMB:
+					std::cout << "ArrayMember  ";
+					std::cout << tree->name[0] << "  ";
+					break;
+				default:
+					std::cout << "var type error!";
+				}
+				std::cout << tree->attr.exp.value;
+				break;
+			case ExpType::VAR:
+				std::cout << "VAR" << "  ";
+				switch (tree->attr.exp.varType)
+				{
+				case VariableType::ID:
+					std::cout << "ID  ";
+					std::cout << tree->name[0] << "  ";
+					break;
+				case VariableType::FIELDMEMB:
+					std::cout << "FieldMember  ";
+					std::cout << tree->name[0] << "  ";
+					break;
+				case VariableType::ARRAYMEMB:
+					std::cout << "ArrayMember  ";
+					std::cout << tree->name[0] << "  ";
+					break;
+				default:
+					std::cout << "var type error!";
+				}
+				if (!tree->symbolTable.empty())
+					std::cout << tree->symbolTable.begin()->second.specific.VarAttr.off << "  "
+					<< tree->symbolTable.begin()->second.specific.VarAttr.level << "  ";
+				break;
+			default:
+				std::cout << "error4!";
+			} 
+			break;
+		default:
+			std::cout << "error5!";
+		}
+
+		std::cout << std::endl;
+
+		for (i = 0; i < MAXCHILDRENNUM; i++)
+			printParseTree(tree->children[i]);
+
+		tree = tree->sibling;
+	}
+
+	INDENTSPACE -= 4;
+}
+
 void Parser::readNextToken() {
-	readNextToken();
+	curToken = scanner.getNextToken();
 }
 
 void Parser::match(Terminal expectedTer) {
@@ -23,7 +248,7 @@ void Parser::match(Terminal expectedTer) {
 	else {
 		syntaxError("can not match Terminal");
 		//TO-DO 结束执行
-		exit(0);
+        //exit(0);
 	}
 }
 
@@ -39,16 +264,16 @@ ParseTreeNode * Parser::program() {
 
 	ParseTreeNode * root = new(std::nothrow) ParseTreeNode(ParseNodeType::PROG);
 	if (root != nullptr) {
-		if (progHead != nullptr) 
+		if (progHead != nullptr)
 			root->children[0] = progHead;
-		else 
+		else
 			syntaxError("a program head is expected!");
 
 		root->children[1] = declPart;
 
 		if (progBody != nullptr)
 			root->children[2] = progBody;
-		else 
+		else
 			syntaxError("a program body is expected!");
 	}
 	match(Tag::DOT);
@@ -61,7 +286,7 @@ ParseTreeNode * Parser::programHead() {
 
 	match(Terminal::PROGRAM);
 	if ((pheadNode != nullptr) && (curToken.tag == Tag::ID)) {
-		pheadNode->name = curToken.lexeme;
+		pheadNode->name[0] = curToken.lexeme;
 	}
 	match(Terminal::ID);
 	return 	 pheadNode;
@@ -77,7 +302,6 @@ ParseTreeNode * Parser::declarePart() {
 			typeDecNode->children[0] = typeDeclare;
 		}
 		else {
-			delete typeDecNode;
 			typeDecNode = nullptr;
 		}
 	}
@@ -89,12 +313,11 @@ ParseTreeNode * Parser::declarePart() {
 			varDecNode->children[0] = varDeclare;
 		}
 		else {
-			delete varDeclare;
 			varDecNode = nullptr;
 		}
 	}
 	ParseTreeNode * procDecNode = procDec();
-	
+
 	if (varDecNode == nullptr) {
 		varDecNode = procDecNode;
 	}
@@ -106,7 +329,7 @@ ParseTreeNode * Parser::declarePart() {
 	if (typeDecNode != varDecNode) {
 		typeDecNode->sibling = varDecNode;
 	}
-	
+
 	if (varDecNode != procDecNode) {
 		varDecNode->sibling = procDecNode;
 	}
@@ -168,6 +391,7 @@ ParseTreeNode * Parser::typeDecMore() {
 		break;
 	case Tag::ID:
 		typeDecMoreNode = typeDecList();
+		break;
 	default:
 		readNextToken();
 		syntaxError("unexpected token !");
@@ -179,10 +403,10 @@ ParseTreeNode * Parser::typeDecMore() {
 /* 产生式  typeId  -->  id                              */
 void Parser::typeId(ParseTreeNode * typeDecNode)
 {
-	int& idnum = (typeDecNode->sameIdNum);
+	int& idnum = (typeDecNode->idNum);
 	if ((curToken.tag == Tag::ID))
 	{
-		typeDecNode->name = curToken.lexeme;
+		typeDecNode->name[typeDecNode->idNum] = curToken.lexeme;
 		idnum += 1;
 	}
 	match(Terminal::ID);
@@ -226,7 +450,7 @@ void Parser::baseType(ParseTreeNode * typeDecNode) {
 		break;
 	default:
 		readNextToken();
-		syntaxError("unexpected token here!");
+        syntaxError("unexpected token here while parse baseType!");
 		break;
 	}
 }
@@ -244,7 +468,7 @@ void Parser::structureType(ParseTreeNode * typeDecNode) {
 		break;
 	default:
 		readNextToken();
-		syntaxError("unexpected token here!");
+        syntaxError("unexpected token here while parse structureType!");
 		break;
 	}
 }
@@ -262,7 +486,7 @@ void Parser::arrayType(ParseTreeNode * typeDecNode) {
 	match(Terminal::UNDERANGE);
 
 	if (curToken.tag == Tag::INTC) {
-		typeDecNode->attr.array.upperBound= std::stoi(curToken.lexeme);
+		typeDecNode->attr.array.upperBound = std::stoi(curToken.lexeme);
 	}
 
 	match(Terminal::INTC);
@@ -305,7 +529,7 @@ ParseTreeNode * Parser::fieldDecList() {
 			break;
 		default:
 			readNextToken();
-			syntaxError("unexpected token here!");
+            syntaxError("unexpected token here while parse fieldDecList!");
 			break;
 		}
 		idList(typeDecNode);
@@ -330,7 +554,7 @@ ParseTreeNode * Parser::fieldDecMore() {
 		break;
 	default:
 		readNextToken();
-		syntaxError("unexpected token here!");
+        syntaxError("unexpected token here while parse fieldDecMore!");
 		break;
 	}
 	return fieldDecNode;
@@ -339,9 +563,9 @@ ParseTreeNode * Parser::fieldDecMore() {
 /* 产生式 idList -->  id  idMore      */
 void Parser::idList(ParseTreeNode * typeDecNode) {
 	if (curToken.tag == Tag::ID) {
-		typeDecNode->name = curToken.lexeme;
+		typeDecNode->name[typeDecNode->idNum] = curToken.lexeme;
 		match(Terminal::ID);
-		typeDecNode->sameIdNum += 1;
+		typeDecNode->idNum += 1;
 	}
 	idMore(typeDecNode);
 }
@@ -357,7 +581,7 @@ void Parser::idMore(ParseTreeNode * typeDecNode) {
 		idList(typeDecNode);
 	default:
 		readNextToken();
-		syntaxError("unexpected token here!");
+        syntaxError("unexpected token here while parse idMore!");
 		break;
 	}
 }
@@ -374,7 +598,7 @@ ParseTreeNode *  Parser::varDec() {
 		break;
 	default:
 		readNextToken();
-		syntaxError("unexpected token");
+		syntaxError("unexpected token while parse varDec");
 		break;
 	}
 	return varDecNode;
@@ -422,7 +646,7 @@ ParseTreeNode * Parser::varDecMore() {
 		break;
 	default:
 		readNextToken();
-		syntaxError("unexpected token here!");
+        syntaxError("unexpected token here while parse varDecMore!");
 		break;
 	}
 	return varDecNode;
@@ -431,10 +655,10 @@ ParseTreeNode * Parser::varDecMore() {
 /* 产生式  varIdList -->  id  varIdMore               */
 void Parser::varIdList(ParseTreeNode * varDecNode) {
 	if (curToken.tag == Tag::ID) {
-		varDecNode->name = curToken.lexeme;
+		varDecNode->name[varDecNode->idNum] = curToken.lexeme;
 		match(Terminal::ID);
-		varDecNode->sameIdNum += 1;
-	}							   
+		varDecNode->idNum += 1;
+	}
 	else {
 		readNextToken();
 		syntaxError("a varid is expected here!");
@@ -454,7 +678,7 @@ void Parser::varIdMore(ParseTreeNode * varDecNode) {
 		break;
 	default:
 		readNextToken();
-		syntaxError("unexpected token here!");
+        syntaxError("unexpected token here while parse varIdList!");
 		break;
 	}
 }
@@ -464,7 +688,7 @@ void Parser::varIdMore(ParseTreeNode * varDecNode) {
 ParseTreeNode * Parser::procDec() {
 	ParseTreeNode  * procDecNode = nullptr;
 	switch (curToken.tag)
-	{					
+	{
 	case Tag::BEGIN:
 		break;
 	case Tag::PROCEDURE:
@@ -472,7 +696,7 @@ ParseTreeNode * Parser::procDec() {
 		break;
 	default:
 		readNextToken();
-		syntaxError("unexpected token here!");
+        syntaxError("unexpected token here while parse procDec!");
 		break;
 	}
 	return procDecNode;
@@ -489,8 +713,8 @@ ParseTreeNode * Parser::procDeclaration() {
 	match(Terminal::PROCEDURE);
 	if (procDecNode != nullptr) {
 		if (curToken.tag == Tag::ID) {
-			procDecNode->name = curToken.lexeme;
-			procDecNode->sameIdNum += 1;
+			procDecNode->name[procDecNode->idNum] = curToken.lexeme;
+			procDecNode->idNum += 1;
 			match(Terminal::ID);
 		}
 
@@ -520,9 +744,10 @@ void Parser::paramList(ParseTreeNode * procDecNode) {
 	case Tag::ID:
 	case Tag::VAR:
 		formalParam = paramDecList();
+		break;
 	default:
 		readNextToken();
-		syntaxError("unexpected token here!");
+        syntaxError("unexpected token here while parse paramList!");
 		break;
 	}
 	procDecNode->children[0] = formalParam;
@@ -554,7 +779,7 @@ ParseTreeNode * Parser::paramMore() {
 		break;
 	default:
 		readNextToken();
-		syntaxError("unexpected token here!");
+        syntaxError("unexpected token here while parse paramMore!");
 		break;
 	}
 	return formalparam;
@@ -583,7 +808,7 @@ ParseTreeNode * Parser::param() {
 			break;
 		default:
 			readNextToken();
-			syntaxError("unexpected token here!");
+            syntaxError("unexpected token here while parse param!");
 			break;
 		}
 	}
@@ -593,8 +818,8 @@ ParseTreeNode * Parser::param() {
 /* 产生式  formList -->  id  fidMore     */
 void Parser::formList(ParseTreeNode * paramDecNode) {
 	if (curToken.tag == Tag::ID) {
-		paramDecNode->name = curToken.lexeme;
-		paramDecNode->sameIdNum += 1;
+		paramDecNode->name[paramDecNode->idNum] = curToken.lexeme;
+		paramDecNode->idNum += 1;
 		match(Terminal::ID);
 	}
 	fidMore(paramDecNode);
@@ -613,7 +838,7 @@ void Parser::fidMore(ParseTreeNode * paramDecNode) {
 		break;
 	default:
 		readNextToken();
-		syntaxError("unexpected token here!");
+        syntaxError("unexpected token here while parse formList!");
 		break;
 	}
 }
@@ -661,20 +886,21 @@ ParseTreeNode * Parser::stmList()
 /* 产生式 < stmMore > -->   ε |  ; stmList                 */
 ParseTreeNode * Parser::stmMore()
 {
-	ParseTreeNode * stmListNode = NULL;
+    ParseTreeNode * stmListNode = nullptr;
 	switch (curToken.tag)
 	{
 	case Tag::ELSE:
 	case Tag::FI:
 	case Tag::END:
-	case Tag::ENDWH:	break;
+    case Tag::ENDWH:
+        break;
 	case Tag::SEMI:
 		match(Terminal::SEMI);
 		stmListNode = stmList();
 		break;
 	default:
 		readNextToken();
-		syntaxError("unexpected token here!");
+        syntaxError("unexpected token here while parse stmMore!");
 		break;
 	}
 	return stmListNode;
@@ -716,7 +942,7 @@ ParseTreeNode * Parser::stm()
 		break;
 	default:
 		readNextToken();
-		syntaxError("unexpected token here!");
+        syntaxError("unexpected token here while parse stm!");
 		break;
 	}
 	return stmNode;
@@ -741,7 +967,7 @@ ParseTreeNode * Parser::assCall()
 		break;
 	default:
 		readNextToken();
-		syntaxError("unexpected token here!");
+        syntaxError("unexpected token here while parse assCall!");
 		break;
 	}
 	return assCallNode;
@@ -752,13 +978,13 @@ ParseTreeNode * Parser::assCall()
 /* 产生式   assignmentRest  -->  variMore :=  exp         */
 ParseTreeNode * Parser::assignmentRest()
 {
-	ParseTreeNode * assiStmtNode = new(std::nothrow) ParseTreeNode(ParseNodeType::STMT,StmtType::ASSIGN);
+	ParseTreeNode * assiStmtNode = new(std::nothrow) ParseTreeNode(ParseNodeType::STMT, StmtType::ASSIGN);
 
 	if (assiStmtNode != nullptr) {
 		ParseTreeNode * variMoreNode = new(std::nothrow) ParseTreeNode(ParseNodeType::EXP, ExpType::VAR);
 		if (variMoreNode != nullptr) {
-			variMoreNode->name = TEMP_NAME;
-			variMoreNode->sameIdNum += 1;
+			variMoreNode->name[variMoreNode->idNum] = TEMP_NAME;
+			variMoreNode->idNum += 1;
 			variMore(variMoreNode);
 		}
 		assiStmtNode->children[0] = variMoreNode;
@@ -821,12 +1047,12 @@ ParseTreeNode * Parser::loopStm()
 ParseTreeNode * Parser::inputStm()
 {
 	ParseTreeNode * inputStmNode = new(std::nothrow) ParseTreeNode(ParseNodeType::STMT, StmtType::READ);
-	
+
 	match(Terminal::READ);
 	match(Terminal::LPAREN);
 	if (inputStmNode != nullptr && curToken.tag == Tag::ID) {
-		inputStmNode->name = curToken.lexeme;
-		inputStmNode->sameIdNum += 1;
+		inputStmNode->name[inputStmNode->idNum] = curToken.lexeme;
+		inputStmNode->idNum += 1;
 	}
 	match(Terminal::ID);
 	match(Terminal::RPAREN);
@@ -848,7 +1074,7 @@ ParseTreeNode * Parser::outputStm()
 	}
 	match(Terminal::RPAREN);
 
-	return nullptr;
+	return outputStmNode;
 }
 
 
@@ -872,13 +1098,13 @@ ParseTreeNode * Parser::callStmRest()
 
 	match(Terminal::LPAREN);
 	if (callStmRestNode != nullptr) {
-		ParseTreeNode * paramNode = new(std::nothrow)  ParseTreeNode(ParseNodeType::EXP,ExpType::VAR);
+		ParseTreeNode * paramNode = new(std::nothrow)  ParseTreeNode(ParseNodeType::EXP, ExpType::VAR);
 		if (paramNode != nullptr) {
-			paramNode->name = TEMP_NAME;
-			paramNode->sameIdNum += 1;
+			paramNode->name[paramNode->idNum] = TEMP_NAME;
+			paramNode->idNum += 1;
 		}
-		paramNode->children[0] = paramNode;
-		paramNode->children[1] = actParamList();
+        callStmRestNode->children[0] = paramNode;
+        callStmRestNode->children[1] = actParamList();
 	}
 	match(Terminal::RPAREN);
 
@@ -905,7 +1131,7 @@ ParseTreeNode * Parser::actParamList()
 		break;
 	default:
 		readNextToken();
-		syntaxError("unexpected token here!");
+        syntaxError("unexpected token here while parse actParamList!");
 		break;
 	}
 
@@ -929,22 +1155,22 @@ ParseTreeNode * Parser::actParamMore()
 		break;
 	default:
 		readNextToken();
-		syntaxError("unexpected token here!");
+        syntaxError("unexpected token here while parse actParamMore!");
 		break;
 	}
 	return actParamListNode;
 }
 
-	
+
 /* 表达式处理函数													 */
-/* 产生式 < 表达式 > -->  < 简单表达式 > [< 关系运算符 > < 简单表达式 > ]	*/
+/* 产生式 exp -->  simpleExp [op simpleExp ]	*/
 ParseTreeNode * Parser::exp()
 {
 	ParseTreeNode * simpleExpNode = simpleExp();
 
 	if (curToken.tag == Tag::LT || curToken.tag == Tag::EQ) {
 		ParseTreeNode * relationOptNode = new(std::nothrow) ParseTreeNode(ParseNodeType::EXP, ExpType::OP);
-		if (relationOptNode != nullptr) {
+        if (relationOptNode != nullptr) {
 			relationOptNode->children[0] = simpleExpNode;
 			relationOptNode->attr.exp.op = curToken.tag;
 
@@ -964,7 +1190,7 @@ ParseTreeNode * Parser::exp()
 ParseTreeNode * Parser::simpleExp()
 {
 	ParseTreeNode * termNode = term();
-	
+
 	while (curToken.tag == Tag::PLUS || curToken.tag == Tag::MINUS) {
 		ParseTreeNode * expNode = new(std::nothrow) ParseTreeNode(ParseNodeType::EXP, ExpType::OP);
 		if (expNode != nullptr) {
@@ -1016,7 +1242,7 @@ ParseTreeNode * Parser::factor()
 	switch (curToken.tag)
 	{
 	case Tag::INTC:
-		factorNode = new(std::nothrow) ParseTreeNode(ParseNodeType::EXP,ExpType::CONST);
+		factorNode = new(std::nothrow) ParseTreeNode(ParseNodeType::EXP, ExpType::CONST);
 		if (factorNode != nullptr) {
 			factorNode->attr.exp.value = std::stoi(curToken.lexeme);
 		}
@@ -1032,7 +1258,7 @@ ParseTreeNode * Parser::factor()
 		break;
 	default:
 		readNextToken();
-		syntaxError("unexpected token here!");
+        syntaxError("unexpected token here while parse factor!");
 		break;
 	}
 
@@ -1045,9 +1271,9 @@ ParseTreeNode * Parser::factor()
 ParseTreeNode * Parser::variable() {
 	ParseTreeNode * varNode = new(std::nothrow) ParseTreeNode(ParseNodeType::EXP, ExpType::VAR);
 
-	if (varNode !=nullptr) {
-		varNode->name = curToken.lexeme;
-		varNode->sameIdNum += 1;
+	if (varNode != nullptr) {
+		varNode->name[varNode->idNum] = curToken.lexeme;
+		varNode->idNum += 1;
 	}
 
 	match(Terminal::ID);
@@ -1097,7 +1323,7 @@ void Parser::variMore(ParseTreeNode * varNode)
 		break;
 	default:
 		readNextToken();
-		syntaxError("unexpected token here!");
+        syntaxError("unexpected token here while parse variMore!");
 		break;
 	}
 }
@@ -1110,13 +1336,13 @@ ParseTreeNode * Parser::fieldvar()
 	ParseTreeNode * varNode = new(std::nothrow) ParseTreeNode(ParseNodeType::EXP, ExpType::VAR);
 
 	if (varNode != nullptr) {
-		varNode->name = curToken.lexeme;
-		varNode->sameIdNum += 1;
+		varNode->name[varNode->idNum] = curToken.lexeme;
+		varNode->idNum += 1;
 	}
 	match(Terminal::ID);
 	fieldvarMore(varNode);
 
-	return nullptr;
+    return varNode;
 }
 
 
@@ -1152,13 +1378,13 @@ void Parser::fieldvarMore(ParseTreeNode * varNode)
 		break;
 	default:
 		readNextToken();
-		syntaxError("unexpected token here!");
+        syntaxError("unexpected token here while parse FieldvarMore!");
 		break;
 	}
 }
 
 
-Parser::Parser(Scanner& scan):
+Parser::Parser(Scanner& scan) :
 	scanner(scan)
 {
 }

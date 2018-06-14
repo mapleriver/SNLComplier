@@ -17,7 +17,6 @@ public:
     Scanner(std::ifstream &sourceCode);
 	std::list<Token> getTokenSequence();
 	Token getNextToken();
-	Tag getLexemeTag(std::string word);
 private: 
 	Token curToken;
 	bool isPartOfLexeme = true;
@@ -32,7 +31,7 @@ private:
 	Scanner::state nextStateFromINID(const int c);
 	void processCurToken(Token& curToken,std::string& curLexeme);
 	void scanFailer(const Scanner::state curState);
-
+	Tag getLexemeTag(std::string word);
 };
 
 #endif // SCANNER_H
