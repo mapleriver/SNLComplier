@@ -207,7 +207,9 @@ public:
 	int idNum;
 	std::string name[10];
 	SymbolTable symbolTable;
-	struct{
+	union Attr{
+		Attr() {};
+		~Attr() {};
 		struct{
 			unsigned int lowerBound;
 			unsigned int upperBound;
