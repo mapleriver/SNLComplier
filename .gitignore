@@ -1,6 +1,6 @@
 ﻿# 编译结果目录
-/Project/debug
-/Project/release
-/Project/x64
+Project/debug
+Project/release
+Project/x64
 
-/Project/SNLComplier.VC.VC.opendb
+Project/SNLComplier.VC.VC.opendb
